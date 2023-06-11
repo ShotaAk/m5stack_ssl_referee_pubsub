@@ -20,6 +20,8 @@ M5Stackのボタンを押すと、下記のcommandをセットしたメッセー
 - Arduino IDE 2.1.0
 - Arduino Library:
   - M5Stack 0.4.3
+- nanopb
+  - https://github.com/nanopb/nanopb
 
 ## Installation
 
