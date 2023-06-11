@@ -11,7 +11,6 @@ const IPAddress multicastIP(224, 5, 23, 1); // マルチキャストグループ
 const unsigned int multicastPort = 10003;   // マルチキャストポート
 
 WiFiUDP udp;
-uint8_t buffer[128]; // メッセージのシリアル化に使用するバッファ
 
 void setup() {
   M5.begin();
@@ -29,7 +28,6 @@ void setup() {
 
   // UDPソケットを開く
   if (!udp.beginMulticast(multicastIP, multicastPort)) {
-  // if (!udp.beginMulticast(multicastIP, multicastPort)) {
     Serial.println("Failed to begin multicast");
     while (1) {
       delay(1000);
@@ -41,6 +39,7 @@ void send_referee_command(Referee_Command command) {
   Referee message = Referee_init_zero;
   message.command = command;
 
+  uint8_t buffer[256];
   pb_ostream_t stream = pb_ostream_from_buffer(buffer, sizeof(buffer));
   if (pb_encode(&stream, Referee_fields, &message)) {
     udp.beginPacket(multicastIP, multicastPort);
@@ -53,6 +52,7 @@ void send_referee_command(Referee_Command command) {
 }
 
 void loop() {
+  // ボタンを押したらパケットを送信する
   if (M5.BtnA.wasPressed()) {
     send_referee_command(Referee_Command_HALT);
   } else if (M5.BtnB.wasPressed()) {
@@ -61,11 +61,10 @@ void loop() {
     send_referee_command(Referee_Command_BALL_PLACEMENT_BLUE);
   }
 
-  // 受信データのチェック
+  // パケットを受信したらシリアルモニタにメッセージを表示する
   int packetSize = udp.parsePacket();
-
   if (packetSize) {
-    uint8_t receivedBuffer[512];
+    uint8_t receivedBuffer[256];
     int bytesRead = udp.read(receivedBuffer, sizeof(receivedBuffer));
     Serial.println(bytesRead);
     pb_istream_t stream = pb_istream_from_buffer(receivedBuffer, bytesRead);
