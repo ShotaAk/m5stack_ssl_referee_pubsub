@@ -44,8 +44,20 @@ $ cp ~/nanopb/*.h ~/m5stack_ssl_referee_pubsub/
 $ cp ~/nanopb/*.c ~/m5stack_ssl_referee_pubsub/
 ```
 
-protoファイルをコンパイルします。
+.protoファイルをコンパイルします。
 
 ```sh
-$ python3 ~/nanopb/generator/nanopb_generator.py *.proto
+# -Q quote、-L quoteオプションにより、インクルードするヘッダーファイル文字列をダブルクォーテーションで囲みます。
+$ python3 ~/nanopb/generator/nanopb_generator.py -Q quote -L quote *.proto
 ```
+
+`m5stack_ssl_referee_pubsub.ino`を開き、以下の箇所を環境に合わせて修正します。
+
+```arduino
+const char* ssid = "ここにSSID";
+const char* password = "ここにパスワード";
+const IPAddress multicastIP(224, 5, 23, 1); // マルチキャストグループのIPアドレス
+const unsigned int multicastPort = 10003;   // マルチキャストポート
+```
+
+Arduino IDEでビルドします。
