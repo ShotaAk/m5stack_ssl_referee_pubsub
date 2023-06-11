@@ -61,3 +61,7 @@ const unsigned int multicastPort = 10003;   // マルチキャストポート
 ```
 
 Arduino IDEでビルドします。
+
+## Reference
+
+- [SSL GC Referee Message](https://github.com/RoboCup-SSL/ssl-game-controller/tree/master/proto)
